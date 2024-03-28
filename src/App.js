@@ -1,24 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { data } from "./script/data";
+import { Input } from "./Input";
+import { List } from "./List";
+import { Filter } from "./Filter";
 
 function App() {
+  const [items, setItems] = useState(data);
+  const [title, setTitle] = useState("");
+  const [filter, setFilter] = useState("All");
+
+  const handleClick = (checkItems) => {
+    const newItems = items.map((item) => {
+      if (item.id === checkItems.id) {
+        item.completed = !item.completed;
+      }
+      return item;
+    });
+
+    setItems(newItems);
+  };
+
+  const handleTitle = (newTitle) => {
+    setItems([...items, { id: uuidv4(), title: newTitle, completed: false }]);
+    setTitle("");
+  };
+
+  const handleFilter = (tab) => {
+    setFilter(tab);
+  };
+
+  const displayItems = items.filter((item) => {
+    if (filter === "All") return true;
+    if (filter === "Active") return !item.completed;
+    if (filter === "Complete") return item.completed;
+    return false;
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1>Todo Matic</h1>
+      <p>What need to be complete?</p>
+
+      <Input title={title} setTitle={setTitle} addTitle={handleTitle} />
+
+      <Filter tab={handleFilter} />
+
+      <p>{displayItems.length} tasks remaining</p>
+      <ul>
+        {displayItems.map((item, index) => (
+          <List key={index} item={item} index={index} onCheck={handleClick} />
+        ))}
+      </ul>
+    </>
   );
 }
 
