@@ -26,6 +26,11 @@ function App() {
     setTitle("");
   };
 
+  const handleDel = (checkItems) => {
+    const newItems = items.filter((item) => item.id !== checkItems.id);
+    setItems(newItems);
+  };
+
   const handleFilter = (tab) => {
     setFilter(tab);
   };
@@ -49,7 +54,13 @@ function App() {
       <p>{displayItems.length} tasks remaining</p>
       <ul>
         {displayItems.map((item, index) => (
-          <List key={index} item={item} index={index} onCheck={handleClick} />
+          <List
+            key={index}
+            item={item}
+            index={index}
+            onCheck={handleClick}
+            onDel={handleDel}
+          />
         ))}
       </ul>
     </>
